@@ -8,6 +8,7 @@ import ConversationClosing from './ConversationClosing';
 import ConversationMessages from './ConversationMessages';
 import ConversationFooter from './ConversationFooter';
 import ConversationDetailsSidebar from './ConversationDetailsSidebar';
+import * as API from '../../api';
 
 type Props = {
   title?: string;
@@ -40,8 +41,9 @@ class ConversationsContainer extends React.Component<Props, State> {
   scrollToEl: any = null;
 
   state: State = {loading: true, selected: null, closing: []};
+  isAdmin: boolean = false;
 
-  componentDidMount() {
+  async componentDidMount() {
     this.props
       .fetch()
       .then(([first]) => {
@@ -50,6 +52,10 @@ class ConversationsContainer extends React.Component<Props, State> {
         this.setupKeyboardShortcuts();
       })
       .then(() => this.scrollToEl.scrollIntoView());
+
+    const currentUser = await API.me();
+
+    this.isAdmin = !!currentUser && currentUser.role === 'admin';
   }
 
   componentWillUnmount() {
@@ -388,7 +394,7 @@ class ConversationsContainer extends React.Component<Props, State> {
               flexDirection: 'column',
               minHeight: 0,
               minWidth: 640,
-              pr: 240, // TODO: animate this if we make it toggle-able
+              pr: this.isAdmin ? 240 : 0, // TODO: animate this if we make it toggle-able
             }}
           >
             <ConversationMessages
@@ -410,7 +416,7 @@ class ConversationsContainer extends React.Component<Props, State> {
               />
             )}
 
-            {selectedConversation && (
+            {selectedConversation && this.isAdmin && (
               <Box
                 sx={{
                   width: 240,

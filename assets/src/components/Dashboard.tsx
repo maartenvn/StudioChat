@@ -34,6 +34,8 @@ import IntegrationsOverview from './integrations/IntegrationsOverview';
 import BillingOverview from './billing/BillingOverview';
 import CustomersPage from './customers/CustomersPage';
 import ReportingDashboard from './reporting/ReportingDashboard';
+import * as API from '../api';
+import {useIsAdmin} from '../hooks/adminHook';
 
 const TITLE_FLASH_INTERVAL = 2000;
 
@@ -45,6 +47,7 @@ const hasValidStripeKey = () => {
 
 const Dashboard = (props: RouteComponentProps) => {
   const auth = useAuth();
+  const isAdmin = useIsAdmin();
   const {pathname} = useLocation();
   const {unreadByCategory: unread} = useConversations();
   const [htmlTitle, setHtmlTitle] = useState('Papercups');
@@ -106,14 +109,16 @@ const Dashboard = (props: RouteComponentProps) => {
                 title="Account"
               >
                 <Menu.Item key="overview">
-                  <Link to="/account/overview">Overview</Link>
+                  <Link to="/account/overview">Overzicht</Link>
                 </Menu.Item>
                 <Menu.Item key="profile">
-                  <Link to="/account/profile">My Profile</Link>
+                  <Link to="/account/profile">Mijn profiel</Link>
                 </Menu.Item>
-                <Menu.Item key="getting-started">
-                  <Link to="/account/getting-started">Getting started</Link>
-                </Menu.Item>
+                {isAdmin && (
+                  <Menu.Item key="getting-started">
+                    <Link to="/account/getting-started">Chat Widget</Link>
+                  </Menu.Item>
+                )}
               </Menu.SubMenu>
               <Menu.SubMenu
                 key="conversations"
@@ -128,7 +133,7 @@ const Dashboard = (props: RouteComponentProps) => {
                         justifyContent: 'space-between',
                       }}
                     >
-                      <Box mr={2}>All conversations</Box>
+                      <Box mr={2}>Alle berichten</Box>
                       <Badge
                         count={unread.all}
                         style={{borderColor: '#FF4D4F'}}
@@ -136,22 +141,25 @@ const Dashboard = (props: RouteComponentProps) => {
                     </Flex>
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="me">
-                  <Link to="/conversations/me">
-                    <Flex
-                      sx={{
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Box mr={2}>Assigned to me</Box>
-                      <Badge
-                        count={unread.mine}
-                        style={{borderColor: '#FF4D4F'}}
-                      />
-                    </Flex>
-                  </Link>
-                </Menu.Item>
+                {isAdmin && (
+                  <Menu.Item key="me">
+                    <Link to="/conversations/me">
+                      <Flex
+                        sx={{
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <Box mr={2}>Assigned berichten</Box>
+                        <Badge
+                          count={unread.mine}
+                          style={{borderColor: '#FF4D4F'}}
+                        />
+                      </Flex>
+                    </Link>
+                  </Menu.Item>
+                )}
+
                 <Menu.Item key="priority">
                   <Link to="/conversations/priority">
                     <Flex
@@ -160,7 +168,7 @@ const Dashboard = (props: RouteComponentProps) => {
                         justifyContent: 'space-between',
                       }}
                     >
-                      <Box mr={2}>Prioritized</Box>
+                      <Box mr={2}>Prioriteit berichten</Box>
                       <Badge
                         count={unread.priority}
                         style={{borderColor: '#FF4D4F'}}
@@ -168,32 +176,38 @@ const Dashboard = (props: RouteComponentProps) => {
                     </Flex>
                   </Link>
                 </Menu.Item>
+
                 <Menu.Item key="closed">
-                  <Link to="/conversations/closed">Closed</Link>
+                  <Link to="/conversations/closed">Geschiedenis</Link>
                 </Menu.Item>
               </Menu.SubMenu>
-              <Menu.Item
-                title="Customers"
-                icon={<TeamOutlined />}
-                key="customers"
-              >
-                <Link to="/customers">Customers</Link>
-              </Menu.Item>
-              <Menu.Item
-                title="Integrations"
-                icon={<ApiOutlined />}
-                key="integrations"
-              >
-                <Link to="/integrations">Integrations</Link>
-              </Menu.Item>
-              {shouldDisplayBilling && (
-                <Menu.Item
-                  title="Billing"
-                  icon={<CreditCardOutlined />}
-                  key="billing"
-                >
-                  <Link to="/billing">Billing</Link>
-                </Menu.Item>
+              {isAdmin && (
+                <>
+                  <Menu.Item
+                    title="Customers"
+                    icon={<TeamOutlined />}
+                    key="customers"
+                  >
+                    <Link to="/customers">Customers</Link>
+                  </Menu.Item>
+                  <Menu.Item
+                    title="Integrations"
+                    icon={<ApiOutlined />}
+                    key="integrations"
+                  >
+                    <Link to="/integrations">Integrations</Link>
+                  </Menu.Item>
+
+                  {shouldDisplayBilling && (
+                    <Menu.Item
+                      title="Billing"
+                      icon={<CreditCardOutlined />}
+                      key="billing"
+                    >
+                      <Link to="/billing">Billing</Link>
+                    </Menu.Item>
+                  )}
+                </>
               )}
             </Menu>
           </Box>

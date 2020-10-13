@@ -11,6 +11,7 @@ import {
   UserOutlined,
 } from '../icons';
 import ConversationDetailsSidebar from './ConversationDetailsSidebar';
+import {useIsAdmin} from '../../hooks/adminHook';
 
 // TODO: create date utility methods so we don't have to do this everywhere
 dayjs.extend(utc);
@@ -33,6 +34,7 @@ const CustomerMetadataSubheader = ({
   conversation: any;
 }) => {
   const [isDrawerVisible, setDrawerVisible] = React.useState(false);
+  const isAdmin = useIsAdmin();
 
   if (!hasCustomerMetadata(customer)) {
     return null;
@@ -93,19 +95,21 @@ const CustomerMetadataSubheader = ({
         </Box>
       </Flex>
 
-      <Drawer
-        placement="right"
-        width={240}
-        closable={false}
-        bodyStyle={{padding: 0, display: 'flex'}}
-        visible={isDrawerVisible}
-        onClose={() => setDrawerVisible(false)}
-      >
-        <ConversationDetailsSidebar
-          customer={customer}
-          conversation={conversation}
-        />
-      </Drawer>
+      {isAdmin && (
+        <Drawer
+          placement="right"
+          width={240}
+          closable={false}
+          bodyStyle={{padding: 0, display: 'flex'}}
+          visible={isDrawerVisible}
+          onClose={() => setDrawerVisible(false)}
+        >
+          <ConversationDetailsSidebar
+            customer={customer}
+            conversation={conversation}
+          />
+        </Drawer>
+      )}
     </>
   );
 };
@@ -129,6 +133,8 @@ const ConversationHeader = ({
   onReopenConversation: (conversationId: string) => void;
   onDeleteConversation: (conversationId: string) => void;
 }) => {
+  const isAdmin = useIsAdmin();
+
   if (!conversation) {
     // No point in showing the header if no conversation exists
     return null;
@@ -179,39 +185,41 @@ const ConversationHeader = ({
         </Box>
 
         <Flex mx={-1}>
-          <Box mx={1}>
-            <Select
-              style={{minWidth: 240}}
-              placeholder="No assignee"
-              value={assigneeId ? String(assigneeId) : undefined}
-              onSelect={(userId) =>
-                onAssignUser(conversationId, String(userId))
-              }
-            >
-              {users.map((user: any) => {
-                const value = String(user.id);
+          {isAdmin && (
+            <Box mx={1}>
+              <Select
+                style={{minWidth: 240}}
+                placeholder="No assignee"
+                value={assigneeId ? String(assigneeId) : undefined}
+                onSelect={(userId) =>
+                  onAssignUser(conversationId, String(userId))
+                }
+              >
+                {users.map((user: any) => {
+                  const value = String(user.id);
 
-                return (
-                  <Select.Option key={value} value={value}>
-                    <Flex sx={{alignItems: 'center'}}>
-                      <UserOutlined style={{marginRight: 8, fontSize: 12}} />
-                      <Box>{user.name || user.email}</Box>
-                    </Flex>
-                  </Select.Option>
-                );
-              })}
-            </Select>
-          </Box>
+                  return (
+                    <Select.Option key={value} value={value}>
+                      <Flex sx={{alignItems: 'center'}}>
+                        <UserOutlined style={{marginRight: 8, fontSize: 12}} />
+                        <Box>{user.name || user.email}</Box>
+                      </Flex>
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </Box>
+          )}
           <Box mx={1}>
             {priority === 'priority' ? (
-              <Tooltip title="Remove priority" placement="bottomRight">
+              <Tooltip title="Verwijder prioriteit" placement="bottomRight">
                 <Button
                   icon={<StarFilled style={{color: colors.gold}} />}
                   onClick={() => onRemovePriority(conversationId)}
                 />
               </Tooltip>
             ) : (
-              <Tooltip title="Mark as priority" placement="bottomRight">
+              <Tooltip title="Markeren als prioriteit" placement="bottomRight">
                 <Button
                   icon={<StarOutlined />}
                   onClick={() => onMarkPriority(conversationId)}
@@ -223,7 +231,7 @@ const ConversationHeader = ({
           {status === 'closed' ? (
             <Fragment>
               <Box mx={1}>
-                <Tooltip title="Reopen conversation" placement="bottomRight">
+                <Tooltip title="Heropen conversatie" placement="bottomRight">
                   <Button
                     icon={<UploadOutlined />}
                     onClick={() => onReopenConversation(conversationId)}
@@ -257,7 +265,7 @@ const ConversationHeader = ({
             </Fragment>
           ) : (
             <Box mx={1}>
-              <Tooltip title="Close conversation" placement="bottomRight">
+              <Tooltip title="Sluit conversatie" placement="bottomRight">
                 <Button
                   icon={<CheckOutlined />}
                   onClick={() => onCloseConversation(conversationId)}
