@@ -11,11 +11,9 @@ const ConversationFooter = ({
 
   const handleMessageChange = (e: any) => setMessage(e.target.value);
 
-  const handleKeyDown = (e: any) => {
-    const {key, metaKey} = e;
-    // Not sure what the best UX is here, but we currently allow
-    // sending the message by pressing "cmd/metaKey + Enter"
-    if (metaKey && key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Allow shift + enter to enter newlines.
+    if (!e.shiftKey && e.key === 'Enter') {
       handleSendMessage();
     }
   };

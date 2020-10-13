@@ -137,7 +137,7 @@ class Register extends React.Component<Props, State> {
 
     return (
       <Layout>
-        <img src="logo.svg" alt="Logo" className="logo" />
+        <img src="/logo.svg" alt="Logo" className="logo" />
         <Flex
           px={[2, 5]}
           py={5}
