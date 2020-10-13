@@ -206,7 +206,7 @@ defmodule ChatApi.Slack do
   @spec identify_customer(Customer.t()) :: binary()
   def identify_customer(%Customer{} = %{email: email, name: name}) do
     case [name, email] do
-      [nil, nil] -> "Anonymous User"
+      [nil, nil] -> "Onbekende Gebruiker"
       [x, nil] -> x
       [nil, y] -> y
       [x, y] -> "#{x} (#{y})"
@@ -278,7 +278,7 @@ defmodule ChatApi.Slack do
           "fields" => [
             %{
               "type" => "mrkdwn",
-              "text" => "*Name:*\n#{name || "Anonymous User"}"
+              "text" => "*Name:*\n#{name || "Onbekende Gebruiker"}"
             },
             %{
               "type" => "mrkdwn",

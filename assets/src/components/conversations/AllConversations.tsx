@@ -26,7 +26,7 @@ const AllConversations = () => {
   return (
     <ConversationsContainer
       loading={loading}
-      title="All conversations"
+      title="Alle berichten"
       account={account}
       currentUser={currentUser}
       currentlyOnline={currentlyOnline}

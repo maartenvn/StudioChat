@@ -21,7 +21,7 @@ const ConversationClosing = ({isHighlighted}: {isHighlighted?: boolean}) => {
           <Box mr={2}>
             <CheckOutlined style={{fontSize: 16, color: colors.green}} />
           </Box>
-          <Text strong>Conversation closed!</Text>
+          <Text strong>Conversatie is gesloten!</Text>
         </Flex>
       </Flex>
       <Box
@@ -32,7 +32,7 @@ const ConversationClosing = ({isHighlighted}: {isHighlighted?: boolean}) => {
         }}
       >
         <Text type="secondary">
-          Reopen it <Link to="/conversations/closed">here</Link>
+          Heropen het <Link to="/conversations/closed">hier</Link>
         </Text>
       </Box>
     </Box>

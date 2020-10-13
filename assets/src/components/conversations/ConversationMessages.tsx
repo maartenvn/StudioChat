@@ -11,8 +11,13 @@ const EmptyMessagesPlaceholder = () => {
     <Box my={4}>
       <Result
         status="success"
-        title="No messages"
-        subTitle="Nothing to show here! Take a well-earned break 😊"
+        title="Geen berichten"
+        subTitle="Geen berichten beschikbaar. Check 'Gesloten' indien een bericht niet langer zichtbaar is."
+        extra={
+          <Link to="/conversations/closed">
+            <Button type="primary">Bekijk gesloten berichten</Button>
+          </Link>
+        }
       />
     </Box>
   );
@@ -23,11 +28,11 @@ const GettingStartedRedirect = () => {
     <Box my={4}>
       <Result
         icon={<SmileOutlined />}
-        title="No messages"
-        subTitle="It looks like your widget hasn't been set up yet!"
+        title="Geen berichten"
+        subTitle="Het chatwidget is momenteel nog niet ingesteld."
         extra={
           <Link to="/account/getting-started">
-            <Button type="primary">Get Started</Button>
+            <Button type="primary">Installeren</Button>
           </Link>
         }
       />

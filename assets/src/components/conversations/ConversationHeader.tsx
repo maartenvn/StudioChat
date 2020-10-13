@@ -174,7 +174,7 @@ const ConversationHeader = ({
                 marginTop: hasBothNameAndEmail ? 0 : 4,
               }}
             >
-              {name || email || 'Anonymous User'}
+              {name || email || 'Onbekende Gebruiker'}
             </Title>
           </Flex>
           {hasBothNameAndEmail && (

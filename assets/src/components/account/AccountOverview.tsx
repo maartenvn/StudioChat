@@ -44,6 +44,8 @@ class AccountOverview extends React.Component<Props, State> {
     isRefreshing: false,
   };
 
+  isAdmin: boolean = false;
+
   async componentDidMount() {
     // NB: this fetches the account data and also handles setting
     // this.state.account and this.state.companyName
@@ -51,6 +53,7 @@ class AccountOverview extends React.Component<Props, State> {
     const currentUser = await API.me();
 
     this.setState({currentUser, isLoading: false});
+    this.isAdmin = !!currentUser && currentUser.role === 'admin';
   }
 
   fetchLatestAccountInfo = async () => {
@@ -230,7 +233,7 @@ class AccountOverview extends React.Component<Props, State> {
     return (
       <Box p={4}>
         <Box mb={4}>
-          <Title level={3}>Account Overview</Title>
+          <Title level={3}>Profiel overzicht</Title>
 
           <Paragraph>
             <Text>This is your account token: </Text>

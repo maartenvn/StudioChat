@@ -370,7 +370,7 @@ class ConversationsContainer extends React.Component<Props, State> {
             ) : (
               <Box p={3}>
                 <Text type="secondary">
-                  {loading ? 'Loading...' : 'No conversations'}
+                  {loading ? 'Laden...' : 'Geen berichten beschikbaar'}
                 </Text>
               </Box>
             )}

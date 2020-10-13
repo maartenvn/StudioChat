@@ -74,7 +74,7 @@ const ConversationItem = ({
               overflow: 'hidden',
             }}
           >
-            {name || email || 'Anonymous User'}
+            {name || email || 'Onbekende Gebruiker'}
           </Text>
         </Flex>
 

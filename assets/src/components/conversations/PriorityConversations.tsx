@@ -26,7 +26,7 @@ const PriorityConversations = () => {
   return (
     <ConversationsContainer
       loading={loading}
-      title="Prioritized"
+      title="Prioriteit"
       account={account}
       currentUser={currentUser}
       currentlyOnline={currentlyOnline}

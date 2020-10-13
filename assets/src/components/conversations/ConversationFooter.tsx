@@ -39,7 +39,7 @@ const ConversationFooter = ({
             <Box mb={2}>
               <TextArea
                 className="TextArea--transparent"
-                placeholder="Type your message here!"
+                placeholder="Typ hier je bericht..."
                 autoSize={{maxRows: 4}}
                 autoFocus
                 value={message}
@@ -49,7 +49,7 @@ const ConversationFooter = ({
             </Box>
             <Flex sx={{justifyContent: 'flex-end'}}>
               <Button type="primary" htmlType="submit">
-                Send
+                Versturen (Enter)
               </Button>
             </Flex>
           </form>

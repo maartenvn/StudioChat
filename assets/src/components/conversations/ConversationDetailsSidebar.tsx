@@ -79,7 +79,7 @@ const ConversationDetailsSidebar = ({customer, conversation}: Props) => {
 
         <DetailsSectionCard>
           <Box mb={2}>
-            <Text strong>{name || 'Anonymous User'}</Text>
+            <Text strong>{name || 'Onbekende Gebruiker'}</Text>
           </Box>
 
           <Flex mb={1} sx={{alignItems: 'center'}}>

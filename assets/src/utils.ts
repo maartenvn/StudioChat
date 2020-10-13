@@ -9,14 +9,14 @@ export const formatRelativeTime = (date: dayjs.Dayjs) => {
   const days = Math.floor(hrs / 24);
 
   if (ms < 10) {
-    return 'just now';
+    return 'net';
   } else if (ms < 60) {
-    return `${ms} seconds ago`;
+    return `${ms} seconden geleden`;
   } else if (mins <= 60) {
-    return `${mins} minute${mins === 1 ? '' : 's'} ago`;
+    return `${mins} minute${mins === 1 ? '' : 'n'} geleden`;
   } else if (hrs <= 24) {
-    return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
+    return `${hrs} ${hrs === 1 ? 'uur' : 'uren'} geleden`;
   } else {
-    return `${days} day${days === 1 ? '' : 's'} ago`;
+    return `${days} ${days === 1 ? 'dag' : 'dagen'} geleden`;
   }
 };

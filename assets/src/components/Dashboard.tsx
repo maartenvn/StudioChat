@@ -110,9 +110,11 @@ const Dashboard = (props: RouteComponentProps) => {
                 icon={<UserOutlined />}
                 title="Account"
               >
-                <Menu.Item key="overview">
-                  <Link to="/account/overview">Overzicht</Link>
-                </Menu.Item>
+                {isAdmin && (
+                  <Menu.Item key="overview">
+                    <Link to="/account/overview">Overzicht</Link>
+                  </Menu.Item>
+                )}
                 <Menu.Item key="profile">
                   <Link to="/account/profile">Mijn profiel</Link>
                 </Menu.Item>
@@ -180,7 +182,7 @@ const Dashboard = (props: RouteComponentProps) => {
                 </Menu.Item>
 
                 <Menu.Item key="closed">
-                  <Link to="/conversations/closed">Geschiedenis</Link>
+                  <Link to="/conversations/closed">Gesloten</Link>
                 </Menu.Item>
               </Menu.SubMenu>
               {isAdmin && (
@@ -217,12 +219,12 @@ const Dashboard = (props: RouteComponentProps) => {
           <Box py={3}>
             <Menu mode="inline" theme="dark">
               <Menu.Item
-                title="Log out"
+                title="Uitloggen"
                 icon={<LogoutOutlined />}
                 key="logout"
                 onClick={logout}
               >
-                Log out
+                Uitloggen
               </Menu.Item>
             </Menu>
           </Box>

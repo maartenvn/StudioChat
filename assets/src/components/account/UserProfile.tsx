@@ -162,36 +162,39 @@ class UserProfile extends React.Component<Props, State> {
 
     return (
       <Box p={4}>
-        <Title level={3}>My Profile</Title>
+        <Title level={3}>Profiel</Title>
 
         <Box mb={3} sx={{maxWidth: 480}}>
           <Paragraph>
-            This information will affect how you appear in the chat. Your
-            display name will be prioritized first, but if no display name is
-            provided, your full name or email will be used instead.
+            Deze informatie bepaald hoe je wordt weergegeven bij andere
+            gebruikers.
+          </Paragraph>
+
+          <Paragraph>
+            Druk eerst op <b>Bewerken</b> om jouw informatie aan te passen.
           </Paragraph>
         </Box>
 
         <Box mb={3} sx={{maxWidth: 480}}>
-          <label htmlFor="full_name">Full name:</label>
+          <label htmlFor="full_name">Volledige naam:</label>
           <Input
             id="full_name"
             type="text"
             value={fullName}
             onChange={this.handleChangeFullName}
-            placeholder="What's your name?"
+            placeholder="Voornaam + achternaam"
             disabled={!isEditing}
           />
         </Box>
 
         <Box mb={3} sx={{maxWidth: 480}}>
-          <label htmlFor="display_name">Display name:</label>
+          <label htmlFor="display_name">Weergave naam:</label>
           <Input
             id="display_name"
             type="text"
             value={displayName}
             onChange={this.handleChangeDisplayName}
-            placeholder="How would you like your name to be displayed?"
+            placeholder="Hoe wil je dat andere gebruikers je zien?"
             disabled={!isEditing}
           />
         </Box>
@@ -202,6 +205,7 @@ class UserProfile extends React.Component<Props, State> {
             style={{color: colors.text}}
             id="email"
             type="text"
+            placeholder="Email"
             value={email}
             disabled
           />
@@ -209,13 +213,13 @@ class UserProfile extends React.Component<Props, State> {
 
         <Flex sx={{alignItems: 'center'}}>
           <Box mb={3} mr={3} sx={{maxWidth: 480, flex: 1}}>
-            <label htmlFor="profile_photo_url">Profile image URL:</label>
+            <label htmlFor="profile_photo_url">Profiel afbeelding:</label>
             <Input
               id="profile_photo_url"
               type="text"
               value={profilePhotoUrl}
               onChange={this.handleChangeProfilePhotoUrl}
-              placeholder="Enter an image URL for your profile photo"
+              placeholder="Geef de URL in van een afbeelding"
               disabled={!isEditing}
             />
           </Box>
@@ -236,29 +240,28 @@ class UserProfile extends React.Component<Props, State> {
           <Flex>
             <Box mr={1}>
               <Button type="default" onClick={this.handleCancel}>
-                Cancel
+                Annuleren
               </Button>
             </Box>
             <Box>
               <Button type="primary" onClick={this.handleUpdate}>
-                Save
+                Opslaan
               </Button>
             </Box>
           </Flex>
         ) : (
           <Button type="primary" onClick={this.handleStartEditing}>
-            Edit
+            Bewerken
           </Button>
         )}
 
         <Divider />
 
-        <Title level={3}>Notification Settings</Title>
+        <Title level={3}>Meldingen</Title>
 
         <Box mb={3} sx={{maxWidth: 480}}>
           <Paragraph>
-            Choose how you would like to be alerted when your account receives
-            new messages from customers.
+            Kies hoe je meldingen kan ontvangen bij nieuwe berichten.
           </Paragraph>
         </Box>
 
@@ -266,7 +269,7 @@ class UserProfile extends React.Component<Props, State> {
           checked={shouldEmailOnNewMessages}
           onChange={this.handleToggleEmailAlertSetting}
         >
-          Send email alert on new messages
+          Stuur mij een email bij een nieuw bericht
         </Checkbox>
       </Box>
     );

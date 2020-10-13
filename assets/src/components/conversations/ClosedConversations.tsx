@@ -36,7 +36,7 @@ const ClosedConversations = () => {
   return (
     <ConversationsContainer
       loading={loading}
-      title="Closed"
+      title="Gesloten"
       account={account}
       currentUser={currentUser}
       currentlyOnline={currentlyOnline}
