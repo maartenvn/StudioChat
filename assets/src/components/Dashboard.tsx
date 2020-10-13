@@ -46,11 +46,12 @@ const hasValidStripeKey = () => {
 };
 
 const Dashboard = (props: RouteComponentProps) => {
+  const title = document.title;
   const auth = useAuth();
   const isAdmin = useIsAdmin();
   const {pathname} = useLocation();
   const {unreadByCategory: unread} = useConversations();
-  const [htmlTitle, setHtmlTitle] = useState('Papercups');
+  const [htmlTitle, setHtmlTitle] = useState(title);
 
   const [section, key] = pathname.split('/').slice(1); // Slice off initial slash
   const totalNumUnread = (unread && unread.all) || 0;
@@ -59,12 +60,13 @@ const Dashboard = (props: RouteComponentProps) => {
   const logout = () => auth.logout().then(() => props.history.push('/login'));
 
   const toggleNotificationMessage = () => {
-    if (totalNumUnread > 0 && htmlTitle.startsWith('Papercups')) {
+    console.log(title);
+    if (totalNumUnread > 0 && htmlTitle.startsWith(title)) {
       setHtmlTitle(
-        `(${totalNumUnread}) New message${totalNumUnread === 1 ? '' : 's'}!`
+        `(${totalNumUnread}) Nieuw bericht${totalNumUnread === 1 ? '' : 's'}!`
       );
     } else {
-      setHtmlTitle('Papercups');
+      setHtmlTitle(title);
     }
   };
 
@@ -81,7 +83,7 @@ const Dashboard = (props: RouteComponentProps) => {
   return (
     <Layout>
       <Helmet defer={false}>
-        <title>{totalNumUnread ? htmlTitle : 'Papercups'}</title>
+        <title>{totalNumUnread ? htmlTitle : title}</title>
       </Helmet>
 
       <Sider
