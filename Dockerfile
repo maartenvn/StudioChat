@@ -10,8 +10,7 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y nodejs fswatch
 
 # Declare environment variables
-ENV 
-    MIX_ENV=prod \
+ENV MIX_ENV=prod \
     DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" \
     SECRET_KEY_BASE="" \
     FROM_ADDRESS="" \ 
