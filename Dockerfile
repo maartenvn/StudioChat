@@ -1,30 +1,18 @@
-ARG MIX_ENV=dev
-FROM elixir:1.10 as dev
-WORKDIR /usr/src/app
-ENV LANG=C.UTF-8
+# Use an official Elixir runtime as a parent image
+FROM elixir:latest
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-    apt-get install -y nodejs fswatch && \
-    mix local.hex --force && \
-    mix local.rebar --force
+RUN apt-get update && \
+  apt-get install -y postgresql-client
 
-# declared here since they are required at build and run time.
-ENV DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" SECRET_KEY_BASE="" MIX_ENV=prod FROM_ADDRESS="" MAILGUN_API_KEY=""
+# Create app directory and copy the Elixir projects into it
+RUN mkdir /app
+COPY . /app
+WORKDIR /app
 
-COPY mix.exs mix.lock ./
-COPY config config
-RUN mix do deps.get, deps.compile
+# Install hex package manager
+RUN mix local.hex --force
 
-COPY assets/package.json assets/package-lock.json ./assets/
-RUN npm install --prefix=assets
-
-COPY priv priv
-COPY assets assets
-RUN npm run build --prefix=assets
-
-COPY lib lib
+# Compile the project
 RUN mix do compile
-RUN mix phx.digest
 
-COPY docker-entrypoint.sh .
-CMD ["/usr/src/app/docker-entrypoint.sh"]
+CMD ["/app/docker-entrypoint.sh"]
