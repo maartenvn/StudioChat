@@ -12,6 +12,10 @@ RUN apt-get update && \
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y nodejs fswatch
 
+# Install Open SSL
+RUN apk add --update openssl ncurses-libs postgresql-client && \
+    rm -rf /var/cache/apk/*
+
 # Declare environment variables
 ENV MIX_ENV=prod \
     DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" \
