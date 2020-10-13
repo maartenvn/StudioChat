@@ -61,7 +61,7 @@ const SenderAvatar = ({
       <Flex
         mr={2}
         sx={{
-          bg: isAgent ? colors.primary : colors.gold,
+          bg: isAgent ? '#4CAF50' : colors.gold,
           height: 32,
           width: 32,
           borderRadius: '50%',
@@ -113,7 +113,7 @@ const ChatMessage = ({
             sx={{
               px: 3,
               py: 2,
-              background: colors.primary,
+              background: '#4CAF50',
             }}
           />
         </Flex>
