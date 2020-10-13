@@ -45,4 +45,4 @@ COPY assets assets
 RUN npm run build --prefix=assets
 
 COPY docker-entrypoint.sh .
-CMD ["./docker-entrypoint.sh"]
+CMD ["bash ./docker-entrypoint.sh"]
