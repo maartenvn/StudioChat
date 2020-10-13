@@ -11,8 +11,18 @@ WORKDIR /app
 
 # Install hex package manager
 RUN mix local.hex --force
+RUN mix local.rebar --force
 
-# Compile the project
+# Install Elixir dependencies
+RUN mix do deps.get, deps.compile
+
+# Install NPM dependencies
+RUN npm install --prefix=assets
+
+# Compile Elixir
 RUN mix do compile
+
+# Compile NPM
+RUN npm run build --prefix=assets
 
 CMD ["/app/docker-entrypoint.sh"]
