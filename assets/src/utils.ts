@@ -13,7 +13,7 @@ export const formatRelativeTime = (date: dayjs.Dayjs) => {
   } else if (ms < 60) {
     return `${ms} seconden geleden`;
   } else if (mins <= 60) {
-    return `${mins} minute${mins === 1 ? '' : 'n'} geleden`;
+    return `${mins} ${mins === 1 ? 'minuut' : 'minuten'} geleden`;
   } else if (hrs <= 24) {
     return `${hrs} ${hrs === 1 ? 'uur' : 'uren'} geleden`;
   } else {
