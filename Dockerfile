@@ -1,6 +1,9 @@
 # Use an official Elixir runtime as a parent image
 FROM elixir:latest
 
+# Create app directory and copy the Elixir projects into it
+WORKDIR /usr/src/app
+
 # Install Postgres Client
 RUN apt-get update && \
   apt-get install -y postgresql-client
@@ -15,9 +18,6 @@ ENV MIX_ENV=prod \
     SECRET_KEY_BASE="" \
     FROM_ADDRESS="" \ 
     MAILGUN_API_KEY=""
-
-# Create app directory and copy the Elixir projects into it
-WORKDIR /usr/src/app
 
 # Install hex package manager
 RUN mix local.hex --force
