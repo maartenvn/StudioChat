@@ -1,8 +1,13 @@
 # Use an official Elixir runtime as a parent image
 FROM elixir:latest
 
+# Install Postgres Client
 RUN apt-get update && \
   apt-get install -y postgresql-client
+
+# Install Node.JS
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt-get install -y nodejs fswatch
 
 # Create app directory and copy the Elixir projects into it
 RUN mkdir /app
