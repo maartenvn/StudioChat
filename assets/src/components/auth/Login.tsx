@@ -1,7 +1,7 @@
 import React from 'react';
 import {RouteComponentProps, Link} from 'react-router-dom';
 import {Box, Flex} from 'theme-ui';
-import {Button, Input, Text, Title} from '../common';
+import {Button, Input, Text, Title, Layout, Card} from '../common';
 import {useAuth} from './AuthProvider';
 import logger from '../../logger';
 
@@ -48,7 +48,8 @@ class Login extends React.Component<Props, State> {
       .catch((err) => {
         logger.error('Error!', err);
         const error =
-          err.response?.body?.error?.message || 'Invalid credentials';
+          err.response?.body?.error?.message ||
+          'Onjuiste inloggegevens. Probeer opnieuw.';
 
         this.setState({error, loading: false});
       });
@@ -58,70 +59,80 @@ class Login extends React.Component<Props, State> {
     const {loading, email, password, error} = this.state;
 
     return (
-      <Flex
-        px={[2, 5]}
-        py={5}
-        sx={{
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Box sx={{width: '100%', maxWidth: 320}}>
-          <Title level={1}>Welcome back</Title>
+      <Layout>
+        <img src="logo.svg" alt="Logo" className="logo" />
 
-          <form onSubmit={this.handleSubmit}>
-            <Box mb={2}>
-              <label htmlFor="email">Email</label>
-              <Input
-                id="email"
-                size="large"
-                type="email"
-                autoComplete="username"
-                value={email}
-                onChange={this.handleChangeEmail}
-              />
-            </Box>
+        <Flex
+          px={[2, 5]}
+          py={5}
+          sx={{
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Card className="rounded" bordered={false}>
+            <Box sx={{width: '100%', maxWidth: 320}}>
+              <Title level={1}>Inloggen</Title>
 
-            <Box mb={2}>
-              <label htmlFor="password">Password</label>
-              <Input
-                id="password"
-                size="large"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={this.handleChangePassword}
-              />
-            </Box>
+              <form onSubmit={this.handleSubmit}>
+                <Box mb={2}>
+                  <label htmlFor="email">Email</label>
+                  <Input
+                    id="email"
+                    size="large"
+                    type="email"
+                    autoComplete="username"
+                    placeholder="Email"
+                    value={email}
+                    onChange={this.handleChangeEmail}
+                  />
+                </Box>
 
-            <Box mt={3}>
-              <Button
-                block
-                size="large"
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-              >
-                Log in
-              </Button>
-            </Box>
+                <Box mb={2}>
+                  <label htmlFor="password">Wachtwoord</label>
+                  <Input
+                    id="password"
+                    size="large"
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Wachwoord"
+                    value={password}
+                    onChange={this.handleChangePassword}
+                  />
+                </Box>
 
-            {error && (
-              <Box mt={2}>
-                <Text type="danger">{error}</Text>
-              </Box>
-            )}
+                <Box mt={3}>
+                  <Button
+                    block
+                    shape="round"
+                    size="large"
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                  >
+                    Inloggen
+                  </Button>
+                </Box>
 
-            <Box mt={error ? 3 : 4}>
-              Don't have an account? <Link to="/register">Sign up!</Link>
+                {error && (
+                  <Box mt={2}>
+                    <Text type="danger">{error}</Text>
+                  </Box>
+                )}
+
+                <Box mt={error ? 3 : 4}>
+                  Nog geen account?{' '}
+                  <Link to="/register">Maak een account aan!</Link>
+                </Box>
+                <Box my={3}>
+                  <Link to="/reset-password">Wachtwoord vergeten?</Link>
+                </Box>
+              </form>
             </Box>
-            <Box my={3}>
-              <Link to="/reset-password">Forgot your password?</Link>
-            </Box>
-          </form>
-        </Box>
-      </Flex>
+          </Card>
+        </Flex>
+      </Layout>
     );
   }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import {RouteComponentProps, Link} from 'react-router-dom';
 import qs from 'query-string';
 import {Box, Flex} from 'theme-ui';
-import {Button, Input, Text, Title} from '../common';
+import {Button, Input, Text, Title, Layout, Card} from '../common';
 import * as API from '../../api';
 import {useAuth} from './AuthProvider';
 import logger from '../../logger';
@@ -53,11 +53,11 @@ class PasswordReset extends React.Component<Props, State> {
     const {password, passwordConfirmation} = this.state;
 
     if (!password) {
-      return 'Password is required';
+      return 'Wachtwoord is vereist';
     } else if (password.length < 8) {
-      return 'Password must be at least 8 characters';
+      return 'Wachtwoord moet minstens 8 characters zijn';
     } else if (password !== passwordConfirmation) {
-      return 'Password confirmation does not match';
+      return 'Wachtwoorden zijn niet hetzelfde';
     } else {
       return null;
     }
@@ -96,7 +96,7 @@ class PasswordReset extends React.Component<Props, State> {
         // TODO: provide more granular error messages?
         const error =
           err.response?.body?.error?.message ||
-          'Something went wrong! Try again in a few minutes.';
+          'Er is iets fout gelopen. Probeer later opnieuw.';
 
         this.setState({error, loading: false});
       });
@@ -106,69 +106,77 @@ class PasswordReset extends React.Component<Props, State> {
     const {loading, password, passwordConfirmation, error} = this.state;
 
     return (
-      <Flex
-        px={[2, 5]}
-        py={5}
-        sx={{
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Box sx={{width: '100%', maxWidth: 320}}>
-          <Title level={1}>Reset password</Title>
+      <Layout>
+        <img src="logo.svg" alt="Logo" className="logo" />
+        <Flex
+          px={[2, 5]}
+          py={5}
+          sx={{
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Card className="rounded" bordered={false}>
+            <Box sx={{width: '100%', maxWidth: 320}}>
+              <Title level={1}>Wachtwoord resetten</Title>
 
-          <form onSubmit={this.handleSubmit}>
-            <Box mb={2}>
-              <label htmlFor="password">New password</label>
-              <Input
-                id="password"
-                size="large"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={this.handleChangePassword}
-                onBlur={this.handleInputBlur}
-              />
+              <form onSubmit={this.handleSubmit}>
+                <Box mb={2}>
+                  <label htmlFor="password">Nieuwe wachtwoord</label>
+                  <Input
+                    id="password"
+                    size="large"
+                    type="password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={this.handleChangePassword}
+                    onBlur={this.handleInputBlur}
+                  />
+                </Box>
+
+                <Box mb={2}>
+                  <label htmlFor="confirm_password">
+                    Bevestig nieuwe wachtwoord
+                  </label>
+                  <Input
+                    id="confirm_password"
+                    size="large"
+                    type="password"
+                    autoComplete="current-password"
+                    value={passwordConfirmation}
+                    onChange={this.handleChangePasswordConfirmation}
+                    onBlur={this.handleInputBlur}
+                  />
+                </Box>
+
+                <Box mt={3}>
+                  <Button
+                    block
+                    shape="round"
+                    size="large"
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                  >
+                    Resetten
+                  </Button>
+                </Box>
+
+                {error && (
+                  <Box mt={2}>
+                    <Text type="danger">{error}</Text>
+                  </Box>
+                )}
+
+                <Box mt={error ? 3 : 4}>
+                  Terug naar <Link to="/login">inloggen</Link>.
+                </Box>
+              </form>
             </Box>
-
-            <Box mb={2}>
-              <label htmlFor="confirm_password">Confirm new password</label>
-              <Input
-                id="confirm_password"
-                size="large"
-                type="password"
-                autoComplete="current-password"
-                value={passwordConfirmation}
-                onChange={this.handleChangePasswordConfirmation}
-                onBlur={this.handleInputBlur}
-              />
-            </Box>
-
-            <Box mt={3}>
-              <Button
-                block
-                size="large"
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-              >
-                Reset
-              </Button>
-            </Box>
-
-            {error && (
-              <Box mt={2}>
-                <Text type="danger">{error}</Text>
-              </Box>
-            )}
-
-            <Box mt={error ? 3 : 4}>
-              Back to <Link to="/login">login</Link>.
-            </Box>
-          </form>
-        </Box>
-      </Flex>
+          </Card>
+        </Flex>
+      </Layout>
     );
   }
 }

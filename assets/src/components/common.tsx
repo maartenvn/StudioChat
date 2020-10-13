@@ -20,6 +20,7 @@ import Table from 'antd/lib/table';
 import Tag from 'antd/lib/tag';
 import Tooltip from 'antd/lib/tooltip';
 import Typography from 'antd/lib/typography';
+import Card from 'antd/lib/card';
 
 import {
   blue,
@@ -112,4 +113,5 @@ export {
   Table,
   Tag,
   Tooltip,
+  Card,
 };

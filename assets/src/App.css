@@ -48,3 +48,11 @@ body {
 .Text--white a {
   color: #fff;
 }
+
+.logo {
+  margin-top: 40px;
+}
+
+.rounded {
+  border-radius: 8px;
+}
