@@ -49,4 +49,4 @@ COPY docker-entrypoint.sh ./
 RUN chmod +x ./docker-entrypoint.sh
 
 # Start the entrypoint
-ENTRYPOINT ["sh", "entrypoint.sh"]
+ENTRYPOINT ["sh", "docker-entrypoint.sh"]
