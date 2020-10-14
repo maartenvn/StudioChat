@@ -49,7 +49,7 @@ class Login extends React.Component<Props, State> {
         logger.error('Error!', err);
         const error =
           err.response?.body?.error?.message ||
-          'Onjuiste inloggegevens. Probeer opnieuw.';
+          'Er is iets fout gelopen. Probeer later opnieuw.';
 
         this.setState({error, loading: false});
       });

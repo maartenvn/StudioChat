@@ -82,7 +82,7 @@ const ConversationItem = ({
           isCustomerOnline ? (
             <Badge status="success" text="Online" />
           ) : (
-            <Text type="secondary">{date}</Text>
+            <Badge status="error" text="Offline" />
           )
         ) : (
           <Badge status="processing" />
