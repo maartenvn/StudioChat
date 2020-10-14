@@ -44,5 +44,5 @@ COPY priv priv
 COPY assets assets
 RUN npm run build --prefix=assets
 
-COPY docker-entrypoint.sh .
+COPY docker-entrypoint.sh ./
 CMD ["./docker-entrypoint.sh"]
