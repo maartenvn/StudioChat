@@ -44,5 +44,9 @@ COPY priv priv
 COPY assets assets
 RUN npm run build --prefix=assets
 
+# Copy the entrypoint
 COPY docker-entrypoint.sh ./
-CMD ["./docker-entrypoint.sh"]
+RUN chmod +x ./docker-entrypoint.sh
+
+# Start the entrypoint
+ENTRYPOINT ["sh", "entrypoint.sh"]
