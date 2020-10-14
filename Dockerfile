@@ -29,7 +29,7 @@ RUN mix local.rebar --force
 # Install Elixir dependencies
 COPY mix.exs mix.lock ./
 COPY config config
-RUN mix do deps.get, de0ps.compile
+RUN mix do deps.get, deps.compile
 
 # Install NPM dependencies
 COPY assets/package.json assets/package-lock.json ./assets/
