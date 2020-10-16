@@ -8,8 +8,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="99.333572mm"
-   height="46.999897mm"
-   viewBox="0 0 99.33357 46.999897"
+   height="54.401352mm"
+   viewBox="0 0 99.33357 54.401352"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
@@ -22,6 +22,18 @@
        width="102.19543"
        height="16.202888"
        id="rect955" />
+    <rect
+       x="17.887918"
+       y="173.75417"
+       width="102.19543"
+       height="16.202888"
+       id="rect955-3" />
+    <rect
+       x="17.887918"
+       y="173.75417"
+       width="102.19543"
+       height="16.202888"
+       id="rect871" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -31,7 +43,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="41.110575"
+     inkscape:cx="43.742108"
      inkscape:cy="184.71343"
      inkscape:document-units="mm"
      inkscape:current-layer="g1716"
@@ -141,6 +153,14 @@
            x="17.888672"
            y="183.55067"><tspan
              style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:'Raleway Ultra-Bold'">STUDIOCHAT</tspan></tspan></text>
+      <text
+         xml:space="preserve"
+         id="text953-6"
+         style="font-style:normal;font-weight:normal;font-size:2.40152px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect955-3);fill:#000000;fill-opacity:1;stroke:none;"
+         transform="matrix(1.4689764,0,0,1.4689764,62.234208,-70.230665)"><tspan
+           x="17.888672"
+           y="175.87869"><tspan
+             style="font-size:2.40152px">By Oilsjt Mjoezik</tspan></tspan></text>
     </g>
   </g>
 </svg>
