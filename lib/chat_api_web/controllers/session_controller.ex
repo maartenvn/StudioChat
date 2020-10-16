@@ -31,7 +31,7 @@ defmodule ChatApiWeb.SessionController do
       {:error, conn} ->
         conn
         |> put_status(401)
-        |> json(%{error: %{status: 401, message: "Invalid email or password"}})
+        |> json(%{error: %{status: 401, message: "Ongeldige email en/of wachtwoord"}})
     end
   end
 

@@ -30,7 +30,7 @@ defmodule ChatApiWeb.SessionControllerTest do
       conn = post(conn, Routes.session_path(conn, :create, @invalid_params))
 
       assert json = json_response(conn, 401)
-      assert json["error"]["message"] == "Invalid email or password"
+      assert json["error"]["message"] == "Ongeldige email en/of wachtwoord"
       assert json["error"]["status"] == 401
     end
 
