@@ -2,7 +2,16 @@ import React, {Fragment} from 'react';
 import {Box, Flex} from 'theme-ui';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import {colors, Button, Drawer, Select, Text, Title, Tooltip} from '../common';
+import {
+  colors,
+  Button,
+  Popconfirm,
+  Drawer,
+  Select,
+  Text,
+  Title,
+  Tooltip,
+} from '../common';
 import {
   CheckOutlined,
   StarOutlined,
@@ -10,13 +19,15 @@ import {
   UploadOutlined,
   UserOutlined,
 } from '../icons';
+import {Customer, Conversation, User} from '../../types';
 import ConversationDetailsSidebar from './ConversationDetailsSidebar';
 import {useIsAdmin} from '../../hooks/adminHook';
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
 
 // TODO: create date utility methods so we don't have to do this everywhere
 dayjs.extend(utc);
 
-const hasCustomerMetadata = (customer: any) => {
+const hasCustomerMetadata = (customer: Customer) => {
   const {current_url, browser, os} = customer;
 
   if (!current_url && !browser && !os) {
@@ -30,8 +41,8 @@ const CustomerMetadataSubheader = ({
   customer,
   conversation,
 }: {
-  customer: any;
-  conversation: any;
+  customer: Customer;
+  conversation: Conversation;
 }) => {
   const [isDrawerVisible, setDrawerVisible] = React.useState(false);
   const isAdmin = useIsAdmin();
@@ -124,8 +135,8 @@ const ConversationHeader = ({
   onReopenConversation,
   onDeleteConversation,
 }: {
-  conversation: any;
-  users: Array<any>;
+  conversation: Conversation | null;
+  users: Array<User>;
   onAssignUser: (conversationId: string, userId: string) => void;
   onMarkPriority: (conversationId: string) => void;
   onRemovePriority: (conversationId: string) => void;
@@ -139,13 +150,12 @@ const ConversationHeader = ({
     // No point in showing the header if no conversation exists
     return null;
   }
-
   const {
     id: conversationId,
     assignee_id,
     status,
     priority,
-    customer = {},
+    customer,
   } = conversation;
   const {name, email} = customer;
   const assigneeId = assignee_id ? String(assignee_id) : undefined;
@@ -189,7 +199,7 @@ const ConversationHeader = ({
             <Box mx={1}>
               <Select
                 style={{minWidth: 240}}
-                placeholder="No assignee"
+                placeholder="Geen assigned persoon"
                 value={assigneeId ? String(assigneeId) : undefined}
                 onSelect={(userId) =>
                   onAssignUser(conversationId, String(userId))
@@ -202,7 +212,7 @@ const ConversationHeader = ({
                     <Select.Option key={value} value={value}>
                       <Flex sx={{alignItems: 'center'}}>
                         <UserOutlined style={{marginRight: 8, fontSize: 12}} />
-                        <Box>{user.name || user.email}</Box>
+                        <Box>{user.full_name || user.email}</Box>
                       </Flex>
                     </Select.Option>
                   );
@@ -238,15 +248,6 @@ const ConversationHeader = ({
                   />
                 </Tooltip>
               </Box>
-              {/*
-
-              FIXME: there's an issue deleting conversations that have associated
-              Slack conversations:
-                ** (Ecto.ConstraintError) constraint error when attempting to delete struct:
-                * slack_conversation_threads_conversation_id_fkey (foreign_key_constraint)
-
-              Need to fix that before uncommenting this.
-
               <Box mx={1}>
                 <Popconfirm
                   title="Are you sure you want to delete this conversation?"
@@ -260,8 +261,6 @@ const ConversationHeader = ({
                   </Tooltip>
                 </Popconfirm>
               </Box>
-
-              */}
             </Fragment>
           ) : (
             <Box mx={1}>
@@ -289,7 +288,7 @@ const ConversationHeader = ({
         >
           <CustomerMetadataSubheader
             customer={customer}
-            conversation={conversation}
+            conversation={conversation as Conversation}
           />
         </Box>
       )}

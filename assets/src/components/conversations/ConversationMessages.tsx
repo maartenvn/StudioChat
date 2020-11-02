@@ -5,6 +5,7 @@ import {Button, colors, Result} from '../common';
 import {SmileOutlined} from '../icons';
 import Spinner from '../Spinner';
 import ChatMessage from './ChatMessage';
+import {Customer, Message, User} from '../../types';
 
 const EmptyMessagesPlaceholder = () => {
   return (
@@ -36,7 +37,6 @@ const GettingStartedRedirect = () => {
           </Link>
         }
       />
-      ,
     </Box>
   );
 };
@@ -48,14 +48,16 @@ const ConversationMessages = ({
   loading,
   isClosing,
   showGetStarted,
+  sx = {},
   setScrollRef,
 }: {
-  messages: Array<any>;
-  currentUser: any;
-  customer: any;
-  loading: boolean;
-  isClosing: boolean;
-  showGetStarted: boolean;
+  messages: Array<Message>;
+  currentUser: User;
+  customer: Customer | null;
+  loading?: boolean;
+  isClosing?: boolean;
+  showGetStarted?: boolean;
+  sx?: any;
   setScrollRef: (el: any) => void;
 }) => {
   return (
@@ -78,12 +80,15 @@ const ConversationMessages = ({
           <Spinner size={40} />
         </Flex>
       ) : (
-        <Box p={4} backgroundColor={colors.white} sx={{minHeight: '100%'}}>
+        <Box
+          backgroundColor={colors.white}
+          sx={{minHeight: '100%', p: 4, ...sx}}
+        >
           {messages.length ? (
-            messages.map((msg: any, key: number) => {
+            messages.map((msg: Message, key: number) => {
               // Slight hack
               const next = messages[key + 1];
-              const isMe = msg.user_id && msg.user_id === currentUser.id;
+              const isMe = !!msg.user_id && msg.user_id === currentUser.id;
               const isLastInGroup = next
                 ? msg.customer_id !== next.customer_id
                 : true;

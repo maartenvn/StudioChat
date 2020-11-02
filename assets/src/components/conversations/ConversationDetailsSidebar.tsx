@@ -1,19 +1,24 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {Box, Flex} from 'theme-ui';
-import {colors, Tag, Text, Tooltip} from '../common';
+import {colors, Badge, Button, Tag, Text, Tooltip} from '../common';
 import {
   CalendarOutlined,
   GlobalOutlined,
   MailOutlined,
   PhoneOutlined,
   UserOutlined,
+  VideoCameraOutlined,
 } from '../icons';
 import {
   SidebarCustomerTags,
   SidebarConversationTags,
 } from './SidebarTagSection';
+import * as API from '../../api';
+import {Conversation, Customer} from '../../types';
+import logger from '../../logger';
 
 // TODO: create date utility methods so we don't have to do this everywhere
 dayjs.extend(utc);
@@ -34,13 +39,43 @@ const DetailsSectionCard = ({children}: {children: any}) => {
   );
 };
 
-type Props = {
-  customer: any;
-  conversation: any;
+const CustomerActiveSessions = ({customerId}: {customerId: string}) => {
+  const [loading, setLoading] = React.useState(false);
+  const [session, setLiveSession] = React.useState<any>();
+
+  React.useEffect(() => {
+    setLoading(true);
+
+    API.fetchBrowserSessions({customerId, isActive: true, limit: 5})
+      .then(([session]) => setLiveSession(session))
+      .catch((err) => logger.error('Error retrieving sessions:', err))
+      .then(() => setLoading(false));
+  }, [customerId]);
+
+  const sessionId = session && session.id;
+
+  return (
+    <Link to={sessionId ? `/sessions/live/${sessionId}` : '/sessions'}>
+      <Button
+        type="primary"
+        icon={<VideoCameraOutlined />}
+        block
+        ghost
+        loading={loading}
+      >
+        View live
+      </Button>
+    </Link>
+  );
 };
 
-const ConversationDetailsSidebar = ({customer, conversation}: Props) => {
-  const {id: conversationId, status} = conversation;
+const CustomerDetails = ({
+  customer,
+  isOnline,
+}: {
+  customer: Customer;
+  isOnline?: boolean;
+}) => {
   const {
     email,
     name,
@@ -62,53 +97,54 @@ const ConversationDetailsSidebar = ({customer, conversation}: Props) => {
     timezone && timezone.length ? timezone.split('_').join(' ') : null;
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        minHeight: '100%',
-        bg: 'rgb(245, 245, 245)',
-        border: `1px solid rgba(0,0,0,.06)`,
-        boxShadow: 'inset rgba(0, 0, 0, 0.1) 0px 0px 4px',
-        flex: 1,
-      }}
-    >
-      <Box px={2} py={3}>
-        <Box px={2} mb={3}>
-          <Text strong>Customer details</Text>
+    <Box px={2} py={3}>
+      <Box px={2} mb={3}>
+        <Text strong>Customer details</Text>
+      </Box>
+
+      <DetailsSectionCard>
+        <Box mb={2}>
+          <Text strong>{name || 'Onbekende Gebruiker'}</Text>
         </Box>
 
-        <DetailsSectionCard>
-          <Box mb={2}>
-            <Text strong>{name || 'Onbekende Gebruiker'}</Text>
+        <Flex mb={1} sx={{alignItems: 'center'}}>
+          <MailOutlined style={{color: colors.primary}} />
+          <Box ml={2}>{email || 'Onbekend'}</Box>
+        </Flex>
+        <Flex mb={1} sx={{alignItems: 'center'}}>
+          <PhoneOutlined style={{color: colors.primary}} />
+          <Box ml={2}>{phone || 'Onbekend'}</Box>
+        </Flex>
+        <Flex mb={1} sx={{alignItems: 'center'}}>
+          <UserOutlined style={{color: colors.primary}} />
+          <Box
+            ml={2}
+            sx={{
+              maxWidth: '100%',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            <Text type="secondary">ID:</Text>{' '}
+            <Tooltip title={externalId || customerId} placement="left">
+              {externalId || customerId}
+            </Tooltip>
           </Box>
+        </Flex>
+      </DetailsSectionCard>
 
-          <Flex mb={1} sx={{alignItems: 'center'}}>
-            <MailOutlined style={{color: colors.primary}} />
-            <Box ml={2}>{email || 'Unknown'}</Box>
+      {isOnline ? (
+        <DetailsSectionCard>
+          <Flex mb={2} sx={{justifyContent: 'space-between'}}>
+            <Text strong>Last seen</Text>
+            <Badge status="processing" text="Online now!" />
           </Flex>
-          <Flex mb={1} sx={{alignItems: 'center'}}>
-            <PhoneOutlined style={{color: colors.primary}} />
-            <Box ml={2}>{phone || 'Unknown'}</Box>
-          </Flex>
-          <Flex mb={1} sx={{alignItems: 'center'}}>
-            <UserOutlined style={{color: colors.primary}} />
-            <Box
-              ml={2}
-              sx={{
-                maxWidth: '100%',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              <Text type="secondary">ID:</Text>{' '}
-              <Tooltip title={externalId || customerId} placement="left">
-                {externalId || customerId}
-              </Tooltip>
-            </Box>
-          </Flex>
+          <Box mb={1}>
+            <CustomerActiveSessions customerId={customerId} />
+          </Box>
         </DetailsSectionCard>
-
+      ) : (
         <DetailsSectionCard>
           <Box mb={2}>
             <Text strong>Last seen</Text>
@@ -132,92 +168,126 @@ const ConversationDetailsSidebar = ({customer, conversation}: Props) => {
             )}
           </Box>
         </DetailsSectionCard>
+      )}
 
+      <DetailsSectionCard>
+        <Box mb={2}>
+          <Text strong>First seen</Text>
+        </Box>
+        <Box>
+          <CalendarOutlined />{' '}
+          {createdAt ? dayjs.utc(createdAt).format('MMMM DD, YYYY') : 'N/A'}
+        </Box>
+      </DetailsSectionCard>
+
+      {hasMetadata && (
         <DetailsSectionCard>
           <Box mb={2}>
-            <Text strong>First seen</Text>
+            <Text strong>Metadata</Text>
           </Box>
-          <Box>
-            <CalendarOutlined />{' '}
-            {createdAt ? dayjs.utc(createdAt).format('MMMM DD, YYYY') : 'N/A'}
-          </Box>
+
+          {Object.entries(metadata).map(([key, value]) => {
+            return (
+              <Box key={key} mb={1}>
+                <Text type="secondary">{key}:</Text> {String(value)}
+              </Box>
+            );
+          })}
         </DetailsSectionCard>
+      )}
 
-        {hasMetadata && (
-          <DetailsSectionCard>
-            <Box mb={2}>
-              <Text strong>Metadata</Text>
-            </Box>
-
-            {Object.entries(metadata).map(([key, value]) => {
-              return (
-                <Box key={key} mb={1}>
-                  <Text type="secondary">{key}:</Text> {String(value)}
-                </Box>
-              );
-            })}
-          </DetailsSectionCard>
+      <DetailsSectionCard>
+        <Box mb={2}>
+          <Text strong>Device</Text>
+        </Box>
+        {formattedTimezone && (
+          <Box mb={1}>
+            <GlobalOutlined /> {formattedTimezone}
+          </Box>
         )}
+        <Box mb={1}>
+          {[os, browser].filter(Boolean).join(' · ') || 'Unknown'}
+        </Box>
+        <Box mb={1}>
+          <Text type="secondary">IP:</Text> {lastIpAddress || 'Unknown'}
+        </Box>
+      </DetailsSectionCard>
 
-        <DetailsSectionCard>
-          <Box mb={2}>
-            <Text strong>Device</Text>
-          </Box>
-          {formattedTimezone && (
-            <Box mb={1}>
-              <GlobalOutlined /> {formattedTimezone}
-            </Box>
-          )}
-          <Box mb={1}>
-            {[os, browser].filter(Boolean).join(' · ') || 'Unknown'}
-          </Box>
-          <Box mb={1}>
-            <Text type="secondary">IP:</Text> {lastIpAddress || 'Unknown'}
-          </Box>
-        </DetailsSectionCard>
+      <DetailsSectionCard>
+        <Box mb={2}>
+          <Text strong>Customer Tags</Text>
+        </Box>
+        <SidebarCustomerTags customerId={customerId} />
+      </DetailsSectionCard>
+    </Box>
+  );
+};
 
-        <DetailsSectionCard>
-          <Box mb={2}>
-            <Text strong>Tags</Text>
-          </Box>
-          <SidebarCustomerTags customerId={customerId} />
-        </DetailsSectionCard>
+const ConversationDetails = ({conversation}: {conversation: Conversation}) => {
+  const {id: conversationId, status} = conversation;
+
+  return (
+    <Box px={2} py={3} sx={{borderTop: '1px solid rgba(0,0,0,.06)'}}>
+      <Box px={2} mb={3}>
+        <Text strong>Conversation details</Text>
       </Box>
 
-      <Box px={2} py={3} sx={{borderTop: '1px solid rgba(0,0,0,.06)'}}>
-        <Box px={2} mb={3}>
-          <Text strong>Conversation details</Text>
-        </Box>
-
-        <Box
-          px={2}
-          mb={1}
-          sx={{
-            maxWidth: '100%',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          <Text type="secondary">ID:</Text>{' '}
-          <Tooltip title={conversationId.toLowerCase()} placement="left">
-            {conversationId.toLowerCase()}
-          </Tooltip>
-        </Box>
-        <Box px={2} mb={3}>
-          <Text type="secondary">Status:</Text>{' '}
-          <Tag color={status === 'open' ? colors.primary : colors.red}>
-            {status}
-          </Tag>
-        </Box>
-
-        <DetailsSectionCard>
-          <Box mb={2}>
-            <Text strong>Tags</Text>
-          </Box>
-          <SidebarConversationTags conversationId={conversationId} />
-        </DetailsSectionCard>
+      <Box
+        px={2}
+        mb={1}
+        sx={{
+          maxWidth: '100%',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        <Text type="secondary">ID:</Text>{' '}
+        <Tooltip title={conversationId.toLowerCase()} placement="left">
+          <Text>{conversationId.toLowerCase()}</Text>
+        </Tooltip>
       </Box>
+      <Box px={2} mb={3}>
+        <Text type="secondary">Status:</Text>{' '}
+        <Tag color={status === 'open' ? colors.primary : colors.red}>
+          {status}
+        </Tag>
+      </Box>
+
+      <DetailsSectionCard>
+        <Box mb={2}>
+          <Text strong>Conversation Tags</Text>
+        </Box>
+        <SidebarConversationTags conversationId={conversationId} />
+      </DetailsSectionCard>
+    </Box>
+  );
+};
+
+type Props = {
+  customer: Customer;
+  conversation?: Conversation;
+  isOnline?: boolean;
+};
+
+const ConversationDetailsSidebar = ({
+  customer,
+  conversation,
+  isOnline,
+}: Props) => {
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        minHeight: '100%',
+        bg: 'rgb(245, 245, 245)',
+        border: `1px solid rgba(0,0,0,.06)`,
+        boxShadow: 'inset rgba(0, 0, 0, 0.1) 0px 0px 4px',
+        flex: 1,
+      }}
+    >
+      <CustomerDetails customer={customer} isOnline={isOnline} />
+      {conversation && <ConversationDetails conversation={conversation} />}
     </Box>
   );
 };

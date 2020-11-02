@@ -34,6 +34,7 @@ defmodule ChatApi.Conversations do
     Conversation
     |> where(account_id: ^account_id)
     |> where(^filter_where(params))
+    |> where([c], is_nil(c.archived_at))
     |> order_by(desc: :inserted_at)
     |> preload([:customer, [messages: [user: :profile]]])
     |> Repo.all()
@@ -65,15 +66,13 @@ defmodule ChatApi.Conversations do
 
   @spec find_by_customer(binary(), binary()) :: [Conversation.t()]
   def find_by_customer(customer_id, account_id) do
-    query =
-      from(c in Conversation,
-        where: c.customer_id == ^customer_id and c.account_id == ^account_id,
-        select: c,
-        order_by: [desc: :inserted_at],
-        preload: [:customer, messages: [user: :profile]]
-      )
-
-    Repo.all(query)
+    Conversation
+    |> where(customer_id: ^customer_id)
+    |> where(account_id: ^account_id)
+    |> where([c], is_nil(c.archived_at))
+    |> order_by(desc: :inserted_at)
+    |> preload([:customer, messages: [user: :profile]])
+    |> Repo.all()
   end
 
   @spec get_conversation!(binary()) :: Conversation.t()
@@ -210,6 +209,31 @@ defmodule ChatApi.Conversations do
       )
 
     Repo.one(query) > 0
+  end
+
+  @spec archive_conversation(Conversation.t() | binary()) ::
+          {:error, Ecto.Changeset.t()} | {:ok, Conversation.t()}
+  def archive_conversation(%Conversation{} = conversation) do
+    update_conversation(conversation, %{archived_at: DateTime.utc_now()})
+  end
+
+  def archive_conversation(conversation_id) do
+    conversation = get_conversation!(conversation_id)
+
+    archive_conversation(conversation)
+  end
+
+  @spec archive_conversations(Ecto.Query.t()) :: {number, nil}
+  def archive_conversations(%Ecto.Query{} = query) do
+    Repo.update_all(query, set: [archived_at: DateTime.utc_now()])
+  end
+
+  @spec query_conversations_closed_for([{:days, number | Decimal.t()}, ...]) :: Ecto.Query.t()
+  def query_conversations_closed_for(days: days) do
+    Conversation
+    |> where([c], is_nil(c.archived_at))
+    |> where(status: "closed")
+    |> where([c], c.updated_at < ago(^days, "day"))
   end
 
   @spec delete_conversation(Conversation.t()) ::

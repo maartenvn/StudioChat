@@ -10,17 +10,17 @@ RUN apt-get update && \
 
 # Install Node.JS
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-    apt-get install -y nodejs fswatch
+  apt-get install -y nodejs fswatch
 
 # Install Open SSL
 RUN apt-get install -y openssl
 
 # Declare environment variables
 ENV MIX_ENV=prod \
-    DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" \
-    SECRET_KEY_BASE="" \
-    FROM_ADDRESS="" \ 
-    MAILGUN_API_KEY=""
+  DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" \
+  SECRET_KEY_BASE="" \
+  FROM_ADDRESS="" \ 
+  MAILGUN_API_KEY=""
 
 # Install hex package manager
 RUN mix local.hex --force
@@ -38,6 +38,9 @@ RUN npm install --prefix=assets
 # Compile Elixir
 COPY lib lib
 RUN mix do compile
+
+# Temporary fix because of https://github.com/facebook/create-react-app/issues/8413
+ENV GENERATE_SOURCEMAP=false
 
 # Compile NPM
 COPY priv priv

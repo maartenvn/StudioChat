@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Flex} from 'theme-ui';
 import {colors, Layout, notification, Sider, Text, Title} from '../common';
 import {sleep} from '../../utils';
+import {Conversation, Message, User} from '../../types';
 import ConversationHeader from './ConversationHeader';
 import ConversationItem from './ConversationItem';
 import ConversationClosing from './ConversationClosing';
@@ -13,13 +14,13 @@ import * as API from '../../api';
 type Props = {
   title?: string;
   account: any;
-  currentUser: any;
+  currentUser: User;
   currentlyOnline?: any;
   loading: boolean;
   showGetStarted: boolean;
   conversationIds: Array<string>;
-  conversationsById: {[key: string]: any};
-  messagesByConversation: {[key: string]: any};
+  conversationsById: {[key: string]: Conversation};
+  messagesByConversation: {[key: string]: Array<Message>};
   fetch: () => Promise<Array<string>>;
   onSelectConversation: (id: string | null, fn?: () => void) => void;
   onUpdateConversation: (id: string, params: any) => Promise<void>;
@@ -51,7 +52,7 @@ class ConversationsContainer extends React.Component<Props, State> {
         this.handleSelectConversation(first);
         this.setupKeyboardShortcuts();
       })
-      .then(() => this.scrollToEl.scrollIntoView());
+      .then(() => this.scrollIntoView());
 
     const currentUser = await API.me();
 
@@ -76,7 +77,7 @@ class ConversationsContainer extends React.Component<Props, State> {
     const messages = messagesByConversation[selected] || [];
 
     if (messages.length > prevMessages.length) {
-      this.scrollToEl.scrollIntoView();
+      this.scrollIntoView();
     }
   }
 
@@ -86,6 +87,10 @@ class ConversationsContainer extends React.Component<Props, State> {
 
   removeKeyboardShortcuts = () => {
     window.removeEventListener('keydown', this.handleKeyboardShortcut);
+  };
+
+  scrollIntoView = () => {
+    this.scrollToEl && this.scrollToEl.scrollIntoView();
   };
 
   handleKeyboardShortcut = (e: any) => {
@@ -191,6 +196,10 @@ class ConversationsContainer extends React.Component<Props, State> {
   };
 
   isCustomerOnline = (customerId: string) => {
+    if (!customerId) {
+      return false;
+    }
+
     const {currentlyOnline = {}} = this.props;
     const key = `customer:${customerId}`;
 
@@ -199,7 +208,7 @@ class ConversationsContainer extends React.Component<Props, State> {
 
   handleSelectConversation = (id: string | null) => {
     this.setState({selected: id}, () => {
-      this.scrollToEl.scrollIntoView();
+      this.scrollIntoView();
     });
 
     this.props.onSelectConversation(id);
@@ -281,7 +290,7 @@ class ConversationsContainer extends React.Component<Props, State> {
     }
 
     this.props.onSendMessage(message, conversationId, () => {
-      this.scrollToEl.scrollIntoView();
+      this.scrollIntoView();
     });
   };
 
@@ -312,6 +321,9 @@ class ConversationsContainer extends React.Component<Props, State> {
     const isClosingSelected =
       !!selectedConversationId &&
       closing.indexOf(selectedConversationId) !== -1;
+    const isSelectedCustomerOnline = selectedCustomer
+      ? this.isCustomerOnline(selectedCustomer.id)
+      : false;
 
     return (
       <Layout style={{background: colors.white}}>
@@ -415,8 +427,7 @@ class ConversationsContainer extends React.Component<Props, State> {
                 onSendMessage={this.handleSendMessage}
               />
             )}
-
-            {selectedConversation && this.isAdmin && (
+            {selectedCustomer && selectedConversation && this.isAdmin && (
               <Box
                 sx={{
                   width: 240,
@@ -428,6 +439,7 @@ class ConversationsContainer extends React.Component<Props, State> {
               >
                 <ConversationDetailsSidebar
                   customer={selectedCustomer}
+                  isOnline={isSelectedCustomerOnline}
                   conversation={selectedConversation}
                 />
               </Box>
