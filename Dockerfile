@@ -21,6 +21,10 @@ ENV MIX_ENV=prod \
 # Temporary fix because of https://github.com/facebook/create-react-app/issues/8413
 ENV GENERATE_SOURCEMAP=false
 
+# Install NPM dependencies
+COPY assets/package.json assets/package-lock.json ./assets/
+RUN npm install --prefix=assets
+
 # Copy frontend files
 COPY priv priv
 COPY assets assets
@@ -39,10 +43,6 @@ RUN mix local.hex --force && \
 COPY lib lib
 RUN mix deps.compile
 RUN mix phx.digest priv/static
-
-# Install NPM dependencies
-COPY assets/package.json assets/package-lock.json ./assets/
-RUN npm install --prefix=assets
 
 # Compile Elixir
 WORKDIR /app
