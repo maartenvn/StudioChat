@@ -55,7 +55,17 @@ body {
 }
 
 .logo {
+  margin: 0 auto;
   margin-top: 40px;
+  width: 400px;
+  max-width: 400px;
+}
+
+/* <= sm */
+@media only screen and (max-width: 960px) {
+  .logo {
+    max-width: 90%;
+  }
 }
 
 .rounded {
