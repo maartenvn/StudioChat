@@ -8,4 +8,5 @@ echo "Done!"
 echo ""
 echo "----------------------------------------"
 echo "Attempting to start server..."
+mix deps.compile certifi
 mix phx.server
