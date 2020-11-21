@@ -84,5 +84,5 @@ USER papercupsuser
 
 # Start
 WORKDIR /app
-ENTRYPOINT ["sh" "docker-entrypoint.sh"]
+ENTRYPOINT ["sh", "docker-entrypoint.sh"]
 CMD ["run"]
