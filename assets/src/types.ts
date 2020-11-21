@@ -21,7 +21,7 @@ export type Customer = {
   host?: string;
   ip?: string;
   last_seen?: string;
-  metadata?: object;
+  metadata?: any;
   os?: string;
   pathname?: string;
   phone?: number;
@@ -70,6 +70,9 @@ export type BrowserSession = {
   started_at: string;
   finished_at?: string;
   metadata?: any;
+  // Client-side properties
+  active?: boolean;
+  ts?: string | Date;
 };
 
 export enum Alignment {

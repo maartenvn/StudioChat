@@ -22,6 +22,10 @@ import {getBotDemoFaqs, setBotDemoFaqs} from '../../storage';
 // Import widget from separate package
 import ChatWidget from '@papercups-io/chat-widget';
 
+const {
+  REACT_APP_ADMIN_ACCOUNT_ID = 'eb504736-0f20-4978-98ff-1a82ae60b266',
+} = process.env;
+
 type FAQ = {
   q: string;
   a: string;
@@ -103,7 +107,7 @@ class Demo extends React.Component<Props, State> {
     return {
       email: email,
       // TODO: use special external_id here for bot demo?
-      external_id: String(id),
+      external_id: [id, email].join('|'),
       metadata: {
         ts: +new Date(),
       },
@@ -285,7 +289,7 @@ class Demo extends React.Component<Props, State> {
           title="Welcome to Papercups!"
           subtitle="Test out our bot in the chat window below 💭"
           primaryColor={colors.primary}
-          accountId="eb504736-0f20-4978-98ff-1a82ae60b266"
+          accountId={REACT_APP_ADMIN_ACCOUNT_ID}
           greeting="Hey there! Try asking a question similar to the FAQs to your left :)"
           customer={customer}
           baseUrl={BASE_URL}

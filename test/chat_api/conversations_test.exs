@@ -13,8 +13,9 @@ defmodule ChatApi.ConversationsTest do
 
     def valid_create_attrs do
       account = account_fixture()
+      customer = customer_fixture(account)
 
-      Enum.into(@valid_attrs, %{account_id: account.id})
+      Enum.into(@valid_attrs, %{account_id: account.id, customer_id: customer.id})
     end
 
     setup do
@@ -70,7 +71,7 @@ defmodule ChatApi.ConversationsTest do
       assert result_ids == [conversation.id]
     end
 
-    test "find_by_customer/2 returns all not archived conversations for a customer", %{
+    test "find_by_customer/2 does not include archived conversations for a customer", %{
       account: account,
       conversation: conversation,
       customer: customer
@@ -81,6 +82,18 @@ defmodule ChatApi.ConversationsTest do
       result_ids = Enum.map(Conversations.find_by_customer(customer.id, account.id), & &1.id)
 
       assert result_ids == [conversation.id]
+    end
+
+    test "find_by_customer/2 does not include closed conversations for a customer", %{
+      account: account,
+      customer: customer
+    } do
+      closed = conversation_fixture(account, customer, %{status: "closed"})
+      results = Conversations.find_by_customer(customer.id, account.id)
+      ids = Enum.map(results, & &1.id)
+
+      refute Enum.member?(ids, closed.id)
+      assert Enum.all?(results, fn conv -> conv.status == "open" end)
     end
 
     test "get_conversation!/1 returns the conversation with given id", %{
@@ -115,7 +128,7 @@ defmodule ChatApi.ConversationsTest do
       assert {:error, %Ecto.Changeset{}} =
                Conversations.update_conversation(conversation, @invalid_attrs)
 
-      assert conversation = Conversations.get_conversation!(conversation.id)
+      assert _conversation = Conversations.get_conversation!(conversation.id)
     end
 
     test "delete_conversation/1 deletes the conversation", %{conversation: conversation} do
@@ -153,6 +166,25 @@ defmodule ChatApi.ConversationsTest do
 
     test "change_conversation/1 returns a conversation changeset", %{conversation: conversation} do
       assert %Ecto.Changeset{} = Conversations.change_conversation(conversation)
+    end
+
+    test "has_agent_replied?/1 checks if an agent has replied to the conversation", %{
+      account: account,
+      customer: customer,
+      conversation: conversation
+    } do
+      refute Conversations.has_agent_replied?(conversation.id)
+
+      # Create a message from a customer (i.e. not an agent)
+      message_fixture(account, conversation, %{customer_id: customer.id})
+
+      refute Conversations.has_agent_replied?(conversation.id)
+
+      # Create a message from an agent
+      user = user_fixture(account)
+      message_fixture(account, conversation, %{user_id: user.id})
+
+      assert Conversations.has_agent_replied?(conversation.id)
     end
 
     test "archive_conversation/1 sets the archive_at field of a conversation", %{

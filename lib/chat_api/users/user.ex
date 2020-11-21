@@ -4,6 +4,7 @@ defmodule ChatApi.Users.User do
   import Ecto.Changeset
 
   alias ChatApi.Conversations.Conversation
+  alias ChatApi.Messages.Message
   alias ChatApi.Accounts.Account
   alias ChatApi.Users.{UserProfile, UserSettings}
 
@@ -14,8 +15,10 @@ defmodule ChatApi.Users.User do
     field(:disabled_at, :utc_datetime)
     field(:archived_at, :utc_datetime)
     field(:role, :string, default: "user")
+    field(:has_valid_email, :boolean)
 
     has_many(:conversations, Conversation, foreign_key: :assignee_id)
+    has_many(:messages, Message, foreign_key: :user_id)
     belongs_to(:account, Account, type: :binary_id)
     has_one(:profile, UserProfile)
     has_one(:settings, UserSettings)
@@ -50,7 +53,7 @@ defmodule ChatApi.Users.User do
           Ecto.Changeset.t()
   def email_verification_changeset(user_or_changeset, attrs) do
     user_or_changeset
-    |> cast(attrs, [:email_confirmation_token, :email_confirmed_at])
+    |> cast(attrs, [:email_confirmation_token, :email_confirmed_at, :has_valid_email])
     |> validate_required([])
   end
 

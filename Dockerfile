@@ -6,21 +6,21 @@ WORKDIR /usr/src/app
 
 # Install Postgres Client
 RUN apt-get update && \
-  apt-get install -y postgresql-client
+    apt-get install -y postgresql-client
 
 # Install Node.JS
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-  apt-get install -y nodejs fswatch
+    apt-get install -y nodejs fswatch
 
 # Install Open SSL
 RUN apt-get install -y openssl
 
 # Declare environment variables
 ENV MIX_ENV=prod \
-  DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" \
-  SECRET_KEY_BASE="" \
-  FROM_ADDRESS="" \ 
-  MAILGUN_API_KEY=""
+    DATABASE_URL="ecto://postgres:postgres@localhost/chat_api" \
+    SECRET_KEY_BASE="" \
+    FROM_ADDRESS="" \ 
+    MAILGUN_API_KEY=""
 
 # Install hex package manager
 RUN mix local.hex --force
