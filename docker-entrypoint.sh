@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # Docker entrypoint script.
 echo "----------------------------------------"
