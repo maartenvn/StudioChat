@@ -76,13 +76,13 @@ COPY --from=build-stage --chown=papercupsuser:papercupsuser /app/priv /app/priv
 RUN chown -R papercupsuser:papercupsuser /app
 
 # Copy docker entrypoint
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod a+x /entrypoint.sh
+COPY docker-entrypoint.sh ./
+RUN chmod +x ./docker-entrypoint.sh
 
 # Use user
 USER papercupsuser
 
 # Start
 WORKDIR /app
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["sh" "docker-entrypoint.sh"]
 CMD ["run"]
