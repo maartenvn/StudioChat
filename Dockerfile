@@ -1,7 +1,7 @@
 ############################
 # Build stage
 ############################
-FROM elixir:latest as build-stage
+FROM elixir:1.10.4-alpine as build-stage
 
 # Create app directory and copy the Elixir projects into it
 RUN mkdir /app
@@ -71,8 +71,8 @@ WORKDIR /app
 RUN adduser -h /app -u 1000 -s /bin/sh -D papercupsuser
 
 # Copy necessary files
-COPY --from=builder --chown=papercupsuser:papercupsuser /app/_build/prod/rel/papercups /app
-COPY --from=builder --chown=papercupsuser:papercupsuser /app/priv /app/priv
+COPY --from=build-stage --chown=papercupsuser:papercupsuser /app/_build/prod/rel/papercups /app
+COPY --from=build-stage --chown=papercupsuser:papercupsuser /app/priv /app/priv
 RUN chown -R papercupsuser:papercupsuser /app
 
 # Copy docker entrypoint
