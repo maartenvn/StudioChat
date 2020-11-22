@@ -6,4 +6,4 @@ mix ecto.setup
 echo "==> Done!"
 echo "----------------------------------------"
 echo "Attempting to start server..."
-mix phx.server
+MIX_ENV=dev mix phx.server
