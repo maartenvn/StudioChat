@@ -1,15 +1,19 @@
-############################
-# Build stage
-############################
-FROM elixir:1.10.4-alpine as build-stage
+# Use an official Elixir runtime as a parent image
+FROM elixir:latest
 
 # Create app directory and copy the Elixir projects into it
-RUN mkdir /app
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Install Dependencies
-RUN apk add --no-cache git nodejs yarn python npm ca-certificates wget gnupg make erlang gcc libc-dev && \
-    npm install npm@latest -g 
+# Install Postgres Client
+RUN apt-get update && \
+    apt-get install -y postgresql-client
+
+# Install Node.JS
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt-get install -y nodejs fswatch
+
+# Install Open SSL
+RUN apt-get install -y openssl
 
 # Declare environment variables
 ENV MIX_ENV=prod \
@@ -18,71 +22,34 @@ ENV MIX_ENV=prod \
     FROM_ADDRESS="" \ 
     MAILGUN_API_KEY=""
 
-# Temporary fix because of https://github.com/facebook/create-react-app/issues/8413
-ENV GENERATE_SOURCEMAP=false
+# Install hex package manager
+RUN mix local.hex --force
+RUN mix local.rebar --force
+
+# Install Elixir dependencies
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix do deps.get, deps.compile
 
 # Install NPM dependencies
 COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm install --prefix=assets
 
-# Copy frontend files
+# Compile Elixir
+COPY lib lib
+RUN mix do compile
+
+# Temporary fix because of https://github.com/facebook/create-react-app/issues/8413
+ENV GENERATE_SOURCEMAP=false
+
+# Compile NPM
 COPY priv priv
 COPY assets assets
 RUN npm run build --prefix=assets
 
-# Copy backend files
-COPY mix.exs mix.lock ./
-COPY config config
-
-# Install hex package manager
-RUN mix local.hex --force && \
-    mix local.rebar --force && \
-    mix deps.get --only prod
-
-# Install Elixir dependencies
-COPY lib lib
-RUN mix deps.compile
-RUN mix phx.digest priv/static
-
-# Compile Elixir
-WORKDIR /app
-COPY rel rel
-RUN mix release papercups
-
-############################
-# Production stage
-############################
-FROM alpine:3.9 AS production-stage
-
-# Add OpenSSL dependency
-RUN apk add --no-cache openssl ncurses-libs
-
-# Configure text-encoding
-ENV LANG=C.UTF-8
-
-# Expose port 4000
-EXPOSE 4000
-
-# Configure workdirectory
-ENV HOME=/app
-WORKDIR /app
-
-# Add user
-RUN adduser -h /app -u 1000 -s /bin/sh -D papercupsuser
-
-# Copy necessary files
-COPY --from=build-stage --chown=papercupsuser:papercupsuser /app/_build/prod/rel/papercups /app
-COPY --from=build-stage --chown=papercupsuser:papercupsuser /app/priv /app/priv
-RUN chown -R papercupsuser:papercupsuser /app
-
-# Copy docker entrypoint
+# Copy the entrypoint
 COPY docker-entrypoint.sh ./
 RUN chmod +x ./docker-entrypoint.sh
 
-# Use user
-USER papercupsuser
-
-# Start
-WORKDIR /app
+# Start the entrypoint
 ENTRYPOINT ["sh", "docker-entrypoint.sh"]
-CMD ["run"]
