@@ -39,7 +39,7 @@ config :chat_api, ChatApiWeb.Endpoint,
   # FIXME: not sure the best way to handle this, but we want
   # to allow our customers' websites to connect to our server
   check_origin: false,
-  force_ssl: [rewrite_on: [:x_forwarded_proto]],
+  #force_ssl: [rewrite_on: [:x_forwarded_proto]],
   secret_key_base: secret_key_base
 
 # Do not print debug messages in production
