@@ -284,16 +284,6 @@ const Dashboard = (props: RouteComponentProps) => {
 
           <Box py={3}>
             <Menu mode="inline" theme="dark" selectable={false}>
-              {shouldDisplayChat(pathname) && (
-                <Menu.Item
-                  title="Chat with us!"
-                  icon={<SmileOutlined />}
-                  key="chat"
-                  onClick={Papercups.toggle}
-                >
-                  Chat with us!
-                </Menu.Item>
-              )}
               <Menu.Item
                 title="Uitloggen"
                 icon={<LogoutOutlined />}
