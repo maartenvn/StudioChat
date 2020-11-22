@@ -30,12 +30,12 @@ class Register extends React.Component<Props, State> {
     password: '',
     passwordConfirmation: '',
     inviteToken: '',
-    redirect: '/conversations/all',
+    redirect: '/account/profile',
     error: null,
   };
 
   componentDidMount() {
-    const {redirect = '/conversations/all'} = qs.parse(
+    const {redirect = '/account/profile'} = qs.parse(
       this.props.location.search
     );
     const {invite: inviteToken} = this.props.match.params;
