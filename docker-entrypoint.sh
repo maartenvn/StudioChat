@@ -3,9 +3,7 @@
 echo "----------------------------------------"
 echo "Running database migrations..."
 mix ecto.setup
-echo "Done!"
-echo ""
+echo "==> Done!"
 echo "----------------------------------------"
 echo "Attempting to start server..."
-mix deps.compile certifi
 mix phx.server
