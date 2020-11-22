@@ -1,9 +1,11 @@
 #!/bin/bash
 # Docker entrypoint script.
+set -e
+
 echo "----------------------------------------"
 echo "Running database migrations..."
 mix ecto.setup
 echo "==> Done!"
 echo "----------------------------------------"
 echo "Attempting to start server..."
-MIX_ENV=dev mix phx.server
+mix phx.server
